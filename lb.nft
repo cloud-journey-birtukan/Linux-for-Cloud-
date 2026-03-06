@@ -1,0 +1,21 @@
+flush ruleset
+
+
+table ip LB {
+    chain forward{
+    type filter hook forward priority 0; policy accept;
+    ip daddr 172.17.0.0/16 accept
+  }    
+    
+    chain prerouting {
+  type nat hook prerouting priority dstnat; policy accept;
+  ip daddr PUBLIC_IP tcp dport 80 dnat to jhash ip saddr mod 2 map{
+           0 : CONTAINER1_IP. 80,  
+           1 : CONTANINER2_IP. 80 }                                                     
+      }
+  }      
+   
+
+
+
+
