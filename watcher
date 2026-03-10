@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# Configuration
+URL="http://127.0.0.1"
+EMAIL="youremail@domail.com"
+LOG_FILE="/var/log/server_monitor.log"
+MAX_RETRIES=3
+
+# Initial State
+FAIL_COUNT=0
+EMAIL_SENT=false
+
+while true; do 
+  if curl -s -f "$URL" >/dev/null; then
+    FAIL_COUNT=0
+    EMAIL_SENT=false
+  else
+    ((FAIL_COUNT++))
+    
+    if [ "$FAIL_COUNT" -le "$MAX_RETRIES" ]; then
+      echo "($(date)) Server down attempting restart ..." >> "$LOG_FILE"
+      sudo systemctl start nginx
+    elif [ "$FAIL_COUNT" -gt "$MAX_RETRIES" ] && [ "$EMAIL_SENT" = "false" ]; then
+      echo "($(date)) Alert limit passed sending an email.." >> "$LOG_FILE"
+      echo "Nginx is down on $(hostname) after $MAX_RETRIES attempts." | mail -s "Alert: Server Failure" "$EMAIL"
+      EMAIL_SENT=true
+    fi
+  fi
+  
+  sleep 60 # Critical
+done
