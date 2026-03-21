@@ -1,0 +1,16 @@
+[Unit]
+Description=Daily S3 File Upload Pipeline
+After=network.target
+
+[Service]
+Type=oneshot
+User=birtukan
+WorkingDirectory=/home/birtukan
+# IMPORTANT: Point to the python executable INSIDE your venv
+ExecStart=/home/birtukan/venv/bin/python3 /home/birtukan/my1boto3.py
+# This captures all your 'logger.info' and 'print' statements
+StandardOutput=null
+StandardError=inherit
+
+[Install]
+WantedBy=multi-user.target
