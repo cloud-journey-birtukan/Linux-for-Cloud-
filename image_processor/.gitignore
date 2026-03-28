@@ -1,0 +1,39 @@
+# --- Python ---
+# Ignore the virtual environment (This is the most important one!)
+venv/
+ENV/
+env/
+.venv/
+
+# Ignore compiled Python files
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# --- AWS & Secrets ---
+# NEVER push your credentials to GitHub
+.aws/
+credentials
+*.pem
+.env
+.secret
+
+# --- Operating System ---
+# Ignore Ubuntu/Linux specific temporary files
+.DS_Store
+.directory
+.Trash/
+*.swp
+*~
+
+# --- IDEs ---
+# If you use VS Code or PyCharm
+.vscode/
+.idea/
+
+# --- Project Specific ---
+# We keep assets/ because your architecture image is there, 
+# but we ignore the logs the containers might create.
+*.log
+docker-compose.override.yml

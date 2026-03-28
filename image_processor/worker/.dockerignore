@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+.git
+.env
+.venv
+# Ignore local virtual environments
+.venv/
+venv/
+env/
+
+# Ignore environment secrets and git
+.env
+.git
+.gitignore
+.env
