@@ -1,0 +1,22 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      golang: 1.x
+    commands:
+      # Install Hugo (Extended version is best for Blowfish theme)
+      - wget https://github.com/gohugoio/hugo/releases/download/v0.121.1/hugo_extended_0.121.1_linux-64bit.tar.gz
+      - tar -xzf hugo_extended_0.121.1_linux-64bit.tar.gz
+      - mv hugo /usr/local/bin/
+  build:
+    commands:
+      - echo Build started on `date`
+      - hugo --minify
+  post_build:
+    commands:
+      - echo Build completed on `date`
+artifacts:
+  files:
+    - '**/*'
+  base-directory: 'public'

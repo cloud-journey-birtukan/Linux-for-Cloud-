@@ -12,7 +12,6 @@ summaryLength = 0
 
 buildDrafts = false
 buildFuture = false
-
 enableEmoji = true
 
 # googleAnalytics = "G-XXXXXXXXX"
