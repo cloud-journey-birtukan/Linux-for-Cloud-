@@ -1,0 +1,8 @@
+[Unit]
+Description=self-healing web server
+After=network.target nginx.service
+[Service]
+ExecStart=/usr/local/bin/watcher
+Restart=always
+[Install]
+WantedBy=multi-user.target
