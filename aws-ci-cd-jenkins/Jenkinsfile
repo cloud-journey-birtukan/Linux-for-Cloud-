@@ -17,14 +17,15 @@ pipeline {
         stage('Compile & Lint') {
             steps {
                 echo 'Validating python integrity metrics...'
-                sh '''
+                 dir('aws-ci-cd-jenkins'){
+                   sh '''
                     python3 -m venv venv
                     ./venv/bin/pip install -r requirements.txt
                     ./venv/bin/python -m py_compile app/*.py
                 '''
             }
         }
-
+}
         stage('Deploy Live on Host') {
             steps {
                 // Secure wrapper injects credentials into the execution block runtime dynamically
