@@ -1,0 +1,52 @@
+pipeline {
+    agent any
+
+    environment {
+     
+        AWS_CREDS = credentials('aws-global-credentials')
+    }
+
+    stages {
+        stage('Pull Code') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Install & Validate') {
+            steps {
+                echo 'Setting up local Python dependencies...'
+                // Create a virtual environment on the host to avoid breaking system libraries
+                sh '''
+                    python3 -m venv venv
+                    ./venv/bin/pip install -r requirements.txt
+                    ./venv/bin/python -m py_compile app/*.py
+                '''
+            }
+        }
+
+        stage('Deploy Natively to AWS') {
+            steps {
+                withAWS(credentials: "${AWS_CREDS}", region: 'us-east-1') {
+                    echo 'Deploying application directly to the server host...'
+                    
+                    // Example native deployment step: 
+                    // This kills any old instances and starts them cleanly in the background.
+                    sh '''
+                        pkill -f "uvicorn app.main:app" || true
+                        pkill -f "app.analyzer" || true
+                        
+                        nohup ./venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000 > webserver.log 2>&1 &
+                        nohup ./venv/bin/python -m app.analyzer > analyzer.log 2>&1 &
+                    '''
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline execution complete.'
+        }
+    }
+}
