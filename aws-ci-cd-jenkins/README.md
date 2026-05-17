@@ -1,6 +1,9 @@
-# AWS EC2 Jenkins CI/CD Pipeline (No-Docker)
+# AWS EC2 Jenkins CI/CD Pipeline 
 
 This repository contains a basic Python application that monitors log files, paired with a lightweight Jenkins CI/CD pipeline. The goal of this project is to run an automated deployment on a single AWS EC2 instance without using containers (Docker/Kubernetes).
+```text
+
+ 
 ┌─────────────────┐         Webhook         ┌─────────────────┐
 │   GitHub Repo   ├────────────────────────►│   Jenkins EC2   │
 └─────────────────┘                         └───────┬─────────┘

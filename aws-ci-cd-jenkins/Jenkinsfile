@@ -2,21 +2,21 @@ pipeline {
     agent any
 
     environment {
-     
-        AWS_CREDS = credentials('aws-global-credentials')
+        // Safe pointer alias referencing your local secure Jenkins Credentials store entry
+        AWS_CREDS = credentials('aws-global-deployer')
     }
 
     stages {
-        stage('Pull Code') {
+        stage('Pull Workspace') {
             steps {
+                // Pulls down the code updates pushed to GitHub
                 checkout scm
             }
         }
 
-        stage('Install & Validate') {
+        stage('Compile & Lint') {
             steps {
-                echo 'Setting up local Python dependencies...'
-                // Create a virtual environment on the host to avoid breaking system libraries
+                echo 'Validating python integrity metrics...'
                 sh '''
                     python3 -m venv venv
                     ./venv/bin/pip install -r requirements.txt
@@ -25,17 +25,17 @@ pipeline {
             }
         }
 
-        stage('Deploy Natively to AWS') {
+        stage('Deploy Live on Host') {
             steps {
+                // Secure wrapper injects credentials into the execution block runtime dynamically
                 withAWS(credentials: "${AWS_CREDS}", region: 'us-east-1') {
-                    echo 'Deploying application directly to the server host...'
-                    
-                    // Example native deployment step: 
-                    // This kills any old instances and starts them cleanly in the background.
+                    echo 'Deploying processes natively to the EC2 host...'
                     sh '''
+                        # Stop legacy background instances safely
                         pkill -f "uvicorn app.main:app" || true
                         pkill -f "app.analyzer" || true
                         
+                        # Relaunch components natively using nohup background daemons
                         nohup ./venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000 > webserver.log 2>&1 &
                         nohup ./venv/bin/python -m app.analyzer > analyzer.log 2>&1 &
                     '''
@@ -45,8 +45,8 @@ pipeline {
     }
 
     post {
-        always {
-            echo 'Pipeline execution complete.'
+        success {
+            echo 'Deployment Finished Successfully. No-Docker pipeline is active.'
         }
     }
 }
