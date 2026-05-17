@@ -4,6 +4,8 @@ pipeline {
     environment {
         // Safe pointer alias referencing your local secure Jenkins Credentials store entry
         AWS_CREDS = credentials('aws-global-deployer')
+        AWS_DEFAULT_REGION = 'us-east-1'
+        AWS_REGION = 'us-east-1'
     }
 
     stages {
